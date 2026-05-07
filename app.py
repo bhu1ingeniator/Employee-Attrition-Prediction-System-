@@ -1,4 +1,4 @@
-# HR Employee Attrition Dashboard
+# Employee Attrition Prediction  Dashboard
 # Built with Streamlit + Machine Learning
 
 # -----------------------------
@@ -21,7 +21,7 @@ warnings.filterwarnings("ignore")
 # Page Configuration
 # -----------------------------
 st.set_page_config(
-    page_title="HR Attrition Dashboard",
+    page_title=" Employee Attrition Prediction  Dashboard",
     page_icon="",
     layout="wide"
 )
@@ -214,7 +214,7 @@ st.markdown("""
 <div class="hero-container">
 
 <div class="hero-title">
- HR Attrition Prediction
+Employee Attrition Prediction 
 </div>
 
 <div class="hero-subtitle">
