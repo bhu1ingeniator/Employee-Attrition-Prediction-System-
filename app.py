@@ -40,7 +40,7 @@ html, body, [class*="css"]  {
     background-color: #f4f7fb;
 }
 
-/* Remove top space */
+/* Remove top spacing */
 
 .block-container {
     padding-top: 1.5rem;
@@ -338,6 +338,7 @@ st.subheader("📊 HR Analytics")
 
 c1, c2 = st.columns(2)
 
+# Attrition Chart
 with c1:
 
     attrition_chart = pd.DataFrame({
@@ -352,13 +353,21 @@ with c1:
         attrition_chart.set_index("Status")
     )
 
+# Overtime Chart
 with c2:
 
-    overtime_chart = pd.DataFrame({
-        "OverTime": df['OverTime'].value_counts()
-    })
+    overtime_chart = df['OverTime'].value_counts()
 
-    st.bar_chart(overtime_chart)
+    overtime_chart = overtime_chart.reset_index()
+
+    overtime_chart.columns = [
+        "OverTime",
+        "Count"
+    ]
+
+    st.bar_chart(
+        overtime_chart.set_index("OverTime")
+    )
 
 st.markdown("</div>", unsafe_allow_html=True)
 
