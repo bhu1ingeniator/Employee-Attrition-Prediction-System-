@@ -1,55 +1,55 @@
-# =========================================================
-# Employee Attrition Prediction Dashboard
-# =========================================================
+# Employee Attrition Prediction  Dashboard
+# Built with Streamlit + Machine Learning
 
+# -----------------------------
+# Import Libraries
+# -----------------------------
 import streamlit as st
 import pandas as pd
 import numpy as np
-import warnings
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 
+from imblearn.over_sampling import SMOTE
+
+import warnings
 warnings.filterwarnings("ignore")
 
-# =========================================================
-# PAGE CONFIG
-# =========================================================
-
+# -----------------------------
+# Page Configuration
+# -----------------------------
 st.set_page_config(
-    page_title="Employee Attrition Dashboard",
-    page_icon="👨‍💼",
+    page_title=" Employee Attrition Prediction  Dashboard",
+    page_icon="",
     layout="wide"
 )
 
-# =========================================================
-# CUSTOM CSS
-# =========================================================
-
+# -----------------------------
+# Custom Styling
+# -----------------------------
 st.markdown("""
 <style>
 
-html, body, [class*="css"]  {
+html, body, [class*="css"] {
     font-family: 'Segoe UI', sans-serif;
 }
 
 /* Main Background */
-
 .stApp {
-    background-color: #f4f7fb;
+    background-color: rgb(245, 247, 251);
 }
 
-/* Remove top spacing */
-
+/* Reduce Top Space */
 .block-container {
     padding-top: 1.5rem;
     padding-bottom: 2rem;
 }
 
-/* HERO SECTION */
+/* ---------------- Hero Section ---------------- */
 
-.hero {
+.hero-container {
 
     background: linear-gradient(
         135deg,
@@ -58,28 +58,30 @@ html, body, [class*="css"]  {
         rgb(37, 99, 235)
     );
 
-    padding: 60px;
+    padding: 65px 40px;
     border-radius: 28px;
     color: white;
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 35px;
+
+    box-shadow:
+        0px 10px 30px rgba(0,0,0,0.12);
 
     position: relative;
     overflow: hidden;
-
-    box-shadow: 0px 10px 30px rgba(0,0,0,0.12);
 }
 
-.hero::before {
+/* Glass Orb Effect */
+.hero-container::before {
 
     content: "";
 
     position: absolute;
 
-    width: 300px;
-    height: 300px;
+    width: 320px;
+    height: 320px;
 
-    background: rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.06);
 
     border-radius: 50%;
 
@@ -88,9 +90,9 @@ html, body, [class*="css"]  {
 }
 
 .hero-title {
-
-    font-size: 52px;
+    font-size: 50px;
     font-weight: bold;
+    margin-bottom: 12px;
     position: relative;
     z-index: 2;
 }
@@ -98,44 +100,34 @@ html, body, [class*="css"]  {
 .hero-subtitle {
 
     font-size: 18px;
-    margin-top: 15px;
-    color: #dbeafe;
+
+    color: rgb(219, 234, 254);
+
+    max-width: 780px;
+
+    margin: auto;
+
+    line-height: 1.8;
 
     position: relative;
     z-index: 2;
 }
 
-/* KPI Cards */
+/* ---------------- Cards ---------------- */
 
-.kpi-card {
+.dashboard-card {
 
     background-color: white;
 
-    padding: 24px;
+    padding: 30px;
 
-    border-radius: 20px;
+    border-radius: 22px;
 
-    text-align: center;
-
-    box-shadow: 0px 3px 15px rgba(0,0,0,0.06);
+    box-shadow:
+        0px 3px 15px rgba(0,0,0,0.06);
 }
 
-.kpi-title {
-
-    font-size: 16px;
-    color: gray;
-}
-
-.kpi-value {
-
-    font-size: 32px;
-    font-weight: bold;
-    color: #2563eb;
-}
-
-/* Dashboard Cards */
-
-.dashboard-card {
+.result-card {
 
     background-color: white;
 
@@ -143,24 +135,25 @@ html, body, [class*="css"]  {
 
     border-radius: 22px;
 
-    box-shadow: 0px 3px 15px rgba(0,0,0,0.06);
+    box-shadow:
+        0px 3px 15px rgba(0,0,0,0.06);
 
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
-/* Button */
+/* ---------------- Button ---------------- */
 
 .stButton > button {
 
     width: 100%;
 
-    background-color: #2563eb;
+    background-color: rgb(59, 130, 246);
 
     color: white;
 
-    border: none;
-
     border-radius: 12px;
+
+    border: none;
 
     padding: 0.9rem;
 
@@ -173,10 +166,12 @@ html, body, [class*="css"]  {
 
 .stButton > button:hover {
 
-    background-color: #1d4ed8;
+    background-color: rgb(37, 99, 235);
+
+    transform: scale(1.01);
 }
 
-/* Footer */
+/* ---------------- Footer ---------------- */
 
 .footer {
 
@@ -184,210 +179,159 @@ html, body, [class*="css"]  {
 
     color: gray;
 
-    margin-top: 50px;
-
     font-size: 14px;
+
+    margin-top: 60px;
+
+    margin-bottom: 10px;
 }
 
-/* Responsive */
+/* ---------------- Responsive ---------------- */
 
-@media (max-width:768px){
+@media (max-width: 768px) {
 
-    .hero-title{
-        font-size:34px;
+    .hero-title {
+        font-size: 34px;
     }
 
-    .hero-subtitle{
-        font-size:15px;
+    .hero-subtitle {
+        font-size: 16px;
+    }
+
+    .dashboard-card,
+    .result-card {
+        padding: 20px;
     }
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================================
-# HERO SECTION
-# =========================================================
-
+# -----------------------------
+# Hero Section
+# -----------------------------
 st.markdown("""
-<div class="hero">
+<div class="hero-container">
 
 <div class="hero-title">
-Employee Attrition Dashboard
+Employee Attrition Prediction 
 </div>
 
 <div class="hero-subtitle">
-Predict whether an employee is likely to stay or leave the company
-based on employee-related factors.
-</div>
+
+Predict whether an employee is likely to stay in the company or leave based on employee details.
 
 </div>
+
+</div>
 """, unsafe_allow_html=True)
 
-# =========================================================
-# LOAD DATA
-# =========================================================
-
-df = pd.read_csv("HR-Employee-Attrition.csv")
-
-# =========================================================
-# KPI SECTION
-# =========================================================
-
-total_emp = len(df)
-
-attrition_rate = round(
-    (df['Attrition'].value_counts()['Yes'] / total_emp) * 100,
-    1
+# Small Caption
+st.caption(
+    "AI-powered employee attrition analysis dashboard"
 )
 
-avg_income = int(df['MonthlyIncome'].mean())
+# -----------------------------
+# Load and Train Model
+# -----------------------------
+@st.cache_resource
+def load_and_train():
 
-overtime_rate = round(
-    (df['OverTime'].value_counts()['Yes'] / total_emp) * 100,
-    1
-)
+    df = pd.read_csv("HR-Employee-Attrition.csv")
 
-k1, k2, k3, k4 = st.columns(4)
-
-with k1:
-    st.markdown(f"""
-    <div class="kpi-card">
-    <div class="kpi-title">Total Employees</div>
-    <div class="kpi-value">{total_emp}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with k2:
-    st.markdown(f"""
-    <div class="kpi-card">
-    <div class="kpi-title">Attrition Rate</div>
-    <div class="kpi-value">{attrition_rate}%</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with k3:
-    st.markdown(f"""
-    <div class="kpi-card">
-    <div class="kpi-title">Average Income</div>
-    <div class="kpi-value">₹{avg_income}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with k4:
-    st.markdown(f"""
-    <div class="kpi-card">
-    <div class="kpi-title">Overtime Employees</div>
-    <div class="kpi-value">{overtime_rate}%</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-# =========================================================
-# PREPROCESSING
-# =========================================================
-
-data = df.copy()
-
-data.drop(
-    columns=['EmployeeCount', 'StandardHours', 'Over18'],
-    inplace=True
-)
-
-le = LabelEncoder()
-
-data['Attrition'] = le.fit_transform(data['Attrition'])
-
-data = pd.get_dummies(
-    data,
-    drop_first=True
-)
-
-X = data.drop('Attrition', axis=1)
-y = data['Attrition']
-
-feature_columns = X.columns
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=0.2,
-    random_state=42
-)
-
-scaler = StandardScaler()
-
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-
-model = RandomForestClassifier(
-    n_estimators=100,
-    random_state=42
-)
-
-model.fit(X_train, y_train)
-
-# =========================================================
-# ANALYTICS SECTION
-# =========================================================
-
-st.markdown("""
-<div class="dashboard-card">
-""", unsafe_allow_html=True)
-
-st.subheader("📊 HR Analytics")
-
-c1, c2 = st.columns(2)
-
-# Attrition Chart
-with c1:
-
-    attrition_chart = pd.DataFrame({
-        "Status": ["Stay", "Leave"],
-        "Count": [
-            df['Attrition'].value_counts()['No'],
-            df['Attrition'].value_counts()['Yes']
-        ]
-    })
-
-    st.bar_chart(
-        attrition_chart.set_index("Status")
+    # Drop unnecessary columns
+    df.drop(
+        columns=['EmployeeCount', 'StandardHours', 'Over18'],
+        inplace=True
     )
 
-# Overtime Chart
-with c2:
+    # Encode target
+    le = LabelEncoder()
 
-    overtime_chart = df['OverTime'].value_counts()
-
-    overtime_chart = overtime_chart.reset_index()
-
-    overtime_chart.columns = [
-        "OverTime",
-        "Count"
-    ]
-
-    st.bar_chart(
-        overtime_chart.set_index("OverTime")
+    df['Attrition'] = le.fit_transform(
+        df['Attrition']
     )
 
-st.markdown("</div>", unsafe_allow_html=True)
+    # One-hot encoding
+    df = pd.get_dummies(
+        df,
+        drop_first=True
+    )
 
-# =========================================================
-# PREDICTION FORM
-# =========================================================
+    # Features and Target
+    X = df.drop('Attrition', axis=1)
 
-st.markdown("""
-<div class="dashboard-card">
-""", unsafe_allow_html=True)
+    y = df['Attrition']
 
-st.subheader("📝 Employee Prediction Form")
+    # Split data
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        random_state=42
+    )
+
+    # Scaling
+    scaler = StandardScaler()
+
+    X_train = scaler.fit_transform(X_train)
+
+    X_test = scaler.transform(X_test)
+
+    # Balance dataset
+    smote = SMOTE(random_state=42)
+
+    X_train, y_train = smote.fit_resample(
+        X_train,
+        y_train
+    )
+
+    # Model
+    model = RandomForestClassifier(
+        n_estimators=100,
+        random_state=42
+    )
+
+    model.fit(X_train, y_train)
+
+    return model, scaler, X.columns.tolist()
+
+
+# -----------------------------
+# Load Model
+# -----------------------------
+model, scaler, feature_cols = load_and_train()
+
+# -----------------------------
+# Employee Form Card
+# -----------------------------
+st.markdown(
+    "<div class='dashboard-card'>",
+    unsafe_allow_html=True
+)
+
+st.markdown("## 📝 Employee Information")
 
 c1, c2, c3 = st.columns(3)
 
+# ---------------- Column 1 ----------------
 with c1:
+
+    st.markdown("### 👤 Personal Info")
 
     age = st.slider(
         "Age",
         18, 60, 30
+    )
+
+    gender = st.selectbox(
+        "Gender",
+        ["Male", "Female"]
+    )
+
+    marital_status = st.selectbox(
+        "Marital Status",
+        ["Single", "Married" ]
     )
 
     distance = st.slider(
@@ -395,40 +339,19 @@ with c1:
         1, 30, 5
     )
 
-    income = st.number_input(
-        "Monthly Income",
-        1000,
-        20000,
-        5000
-    )
-
+# ---------------- Column 2 ----------------
 with c2:
 
+    st.markdown("### 💼 Job Details")
+
+    job_level = st.slider(
+        "Job Level",
+        1, 5, 2
+    )
+
     overtime = st.selectbox(
-        "OverTime",
+        "Overtime",
         ["Yes", "No"]
-    )
-
-    job_satisfaction = st.slider(
-        "Job Satisfaction",
-        1, 4, 3
-    )
-
-    work_life = st.slider(
-        "Work Life Balance",
-        1, 4, 3
-    )
-
-with c3:
-
-    years_company = st.slider(
-        "Years At Company",
-        0, 40, 5
-    )
-
-    env_satisfaction = st.slider(
-        "Environment Satisfaction",
-        1, 4, 3
     )
 
     travel = st.selectbox(
@@ -440,25 +363,72 @@ with c3:
         ]
     )
 
-predict = st.button("Generate Prediction")
+    monthly_income = st.number_input(
+        "Monthly Income",
+        1000,
+        200000,
+        5000,
+        
+    )
 
-st.markdown("</div>", unsafe_allow_html=True)
+# ---------------- Column 3 ----------------
+with c3:
 
-# =========================================================
-# PREPARE INPUT
-# =========================================================
+    st.markdown("### 📊 Satisfaction")
 
+    job_satisfaction = st.slider(
+        "Job Satisfaction",
+        1, 4, 3
+    )
+
+    env_satisfaction = st.slider(
+        "Environment Satisfaction",
+        1, 4, 3
+    )
+
+    work_life_balance = st.slider(
+        "Work Life Balance",
+        1, 4, 3
+    )
+
+    years_at_company = st.slider(
+        "Years At Company",
+        0, 40, 3
+    )
+
+st.write("")
+
+predict_button = st.button(
+    "Generate Prediction"
+)
+
+st.markdown(
+    "</div>",
+    unsafe_allow_html=True
+)
+
+# -----------------------------
+# Prepare Input
+# -----------------------------
 def prepare_input():
 
-    row = {col: 0 for col in feature_columns}
+    row = {col: 0 for col in feature_cols}
 
     row['Age'] = age
     row['DistanceFromHome'] = distance
-    row['MonthlyIncome'] = income
+    row['JobLevel'] = job_level
     row['JobSatisfaction'] = job_satisfaction
-    row['WorkLifeBalance'] = work_life
-    row['YearsAtCompany'] = years_company
     row['EnvironmentSatisfaction'] = env_satisfaction
+    row['WorkLifeBalance'] = work_life_balance
+    row['MonthlyIncome'] = monthly_income
+    row['YearsAtCompany'] = years_at_company
+
+    # Encoded Columns
+    if f'Gender_{gender}' in row:
+        row[f'Gender_{gender}'] = 1
+
+    if f'MaritalStatus_{marital_status}' in row:
+        row[f'MaritalStatus_{marital_status}'] = 1
 
     if overtime == "Yes":
         row['OverTime_Yes'] = 1
@@ -468,31 +438,33 @@ def prepare_input():
 
     input_df = pd.DataFrame([row])
 
-    input_scaled = scaler.transform(input_df)
+    scaled_input = scaler.transform(input_df)
 
-    return input_scaled
+    return scaled_input
 
-# =========================================================
-# PREDICTION
-# =========================================================
+# -----------------------------
+# Prediction Section
+# -----------------------------
+if predict_button:
 
-if predict:
+    input_data = prepare_input()
 
-    user_data = prepare_input()
+    prediction = model.predict(input_data)[0]
 
-    prediction = model.predict(user_data)[0]
-
-    probability = model.predict_proba(user_data)[0]
+    probability = model.predict_proba(input_data)[0]
 
     stay_prob = probability[0] * 100
+
     leave_prob = probability[1] * 100
 
-    st.markdown("""
-    <div class="dashboard-card">
-    """, unsafe_allow_html=True)
+    st.markdown(
+        "<div class='result-card'>",
+        unsafe_allow_html=True
+    )
 
-    st.subheader("📌 Prediction Result")
+    st.markdown("## 📌 Prediction Result")
 
+    # Prediction Result
     if prediction == 1:
 
         st.error(
@@ -507,15 +479,16 @@ if predict:
 
     st.write("")
 
-    r1, r2 = st.columns(2)
+    # Probability Metrics
+    p1, p2 = st.columns(2)
 
-    with r1:
+    with p1:
         st.metric(
             "Stay Probability",
             f"{stay_prob:.1f}%"
         )
 
-    with r2:
+    with p2:
         st.metric(
             "Leave Probability",
             f"{leave_prob:.1f}%"
@@ -523,58 +496,74 @@ if predict:
 
     st.write("")
 
-    chart_data = pd.DataFrame({
-        "Status": ["Stay", "Leave"],
-        "Probability": [stay_prob, leave_prob]
-    })
+    # ---------------- Charts ----------------
+    c1, c2 = st.columns(2)
 
-    st.bar_chart(
-        chart_data.set_index("Status")
-    )
+    # Left Chart
+    with c1:
 
-    st.subheader("⚠️ Risk Analysis")
+        st.markdown("### 📊 Prediction Analysis")
 
-    risks = []
+        chart_data = pd.DataFrame({
+            "Status": ["Stay", "Leave"],
+            "Probability": [stay_prob, leave_prob]
+        })
 
-    if overtime == "Yes":
-        risks.append("Employee works overtime frequently")
-
-    if job_satisfaction <= 2:
-        risks.append("Low job satisfaction detected")
-
-    if work_life <= 2:
-        risks.append("Poor work-life balance")
-
-    if env_satisfaction <= 2:
-        risks.append("Low environment satisfaction")
-
-    if distance > 20:
-        risks.append("Long distance from office")
-
-    if income < 3000:
-        risks.append("Low monthly income")
-
-    if risks:
-
-        for risk in risks:
-            st.warning(risk)
-
-    else:
-
-        st.success(
-            "No major attrition risk factors detected"
+        st.bar_chart(
+            chart_data.set_index("Status")
         )
+
+    # Right Side
+    with c2:
+
+        st.markdown("### ⚠️ Risk Factors")
+
+        risks = []
+
+        if overtime == "Yes":
+            risks.append("Works overtime frequently")
+
+        if job_satisfaction <= 2:
+            risks.append("Low job satisfaction")
+
+        if work_life_balance <= 2:
+            risks.append("Poor work-life balance")
+
+        if env_satisfaction <= 2:
+            risks.append("Low environment satisfaction")
+
+        if distance > 20:
+            risks.append("Long travel distance")
+
+        if monthly_income < 3000:
+            risks.append("Low monthly income")
+
+        if risks:
+
+            for risk in risks:
+                st.warning(risk)
+
+        else:
+
+            st.success(
+                "No major risk factors detected"
+            )
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# =========================================================
-# FOOTER
-# =========================================================
+else:
 
+    st.info(
+        "Enter employee details and click Generate Prediction"
+    )
+
+# -----------------------------
+# Footer
+# -----------------------------
 st.markdown("""
 <div class="footer">
 
-Built by Bhuvan • Employee Attrition Dashboard
+Built by Bhuvan • HR Attrition Prediction
 
 </div>
 """, unsafe_allow_html=True)
