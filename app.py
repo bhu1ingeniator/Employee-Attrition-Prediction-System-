@@ -21,7 +21,7 @@ warnings.filterwarnings("ignore")
 # Page Configuration
 # -----------------------------
 st.set_page_config(
-    page_title=" Employee Attrition Prediction  Dashboard",
+    page_title=" HR Employee Attrition Prediction  Dashboard",
     page_icon="",
     layout="wide"
 )
@@ -563,7 +563,7 @@ else:
 st.markdown("""
 <div class="footer">
 
-Built by Bhuvan • HR Attrition Prediction
+Built by Bhuvan • HR Employee Attrition Prediction
 
 </div>
 """, unsafe_allow_html=True)
