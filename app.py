@@ -214,7 +214,7 @@ st.markdown("""
 <div class="hero-container">
 
 <div class="hero-title">
-Employee Attrition Prediction 
+HR Employee Attrition Prediction System
 </div>
 
 <div class="hero-subtitle">
