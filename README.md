@@ -29,6 +29,22 @@ The application provides an interactive dashboard where users can enter employee
 - Responsive dashboard interface
 - Clean and user-friendly UI
 
+  ## Screenshots
+
+### Dashboard
+
+![Employee Attrition Dashboard](screenshots/dashboard.png)
+
+### Employee Information
+
+![Employee Information](screenshots/employee-information.png)
+
+### Prediction Result
+
+![Prediction Result](screenshots/prediction-result.png)
+
+GitHub: https://github.com/bhu1ingeniator
+
 ## Machine Learning Workflow
 
 The application follows this workflow:
@@ -55,18 +71,3 @@ Prediction
 Stay / Leave Probability
 
 
-## Screenshots
-
-### Dashboard
-
-![Employee Attrition Dashboard](screenshots/dashboard.png)
-
-### Employee Information
-
-![Employee Information](screenshots/employee-information.png)
-
-### Prediction Result
-
-![Prediction Result](screenshots/prediction-result.png)
-
-GitHub: https://github.com/bhu1ingeniator
