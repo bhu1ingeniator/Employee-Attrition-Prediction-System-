@@ -1,73 +1,47 @@
 # Employee Attrition Prediction System
 
-An interactive machine learning dashboard built with Streamlit that predicts whether an employee is likely to stay with a company or leave based on selected employee and workplace attributes.
+A machine learning-powered Streamlit application that predicts whether an employee is likely to **stay with or leave an organization** based on employee and workplace-related attributes.
 
-## Overview
+## Live Demo
 
-Employee attrition can have a significant impact on organizations through increased recruitment costs, productivity loss, and employee replacement efforts.
+[Open the Employee Attrition Prediction System](https://employee-attrition-prediction-system-app.streamlit.app/)
 
-This project uses machine learning to analyze employee-related factors and estimate the probability of employee attrition.
+## Project Overview
 
-The application provides an interactive dashboard where users can enter employee information and receive:
+Employee attrition can have a significant impact on organizations through increased recruitment costs, productivity loss, and employee turnover.
 
-- Employee attrition prediction
-- Stay probability
-- Leave probability
-- Prediction analysis chart
-- Potential employee risk factors
+This project uses machine learning to analyze employee-related information and predict the likelihood of employee attrition through an interactive Streamlit dashboard.
+
+The application allows users to enter employee details and generate an attrition prediction directly from the web interface.
 
 ## Features
 
 - Interactive Streamlit dashboard
 - Employee attrition prediction
-- Random Forest classification model
-- SMOTE for handling class imbalance
-- Numerical feature scaling
-- Categorical feature encoding
-- Stay and leave probability estimates
-- Risk-factor analysis
-- Responsive dashboard interface
-- Clean and user-friendly UI
-
-  ## Screenshots
-
-### Dashboard
-
-![Employee Attrition Dashboard](screenshots/dashboard.png)
-
-### Employee Information
-
-![Employee Information](screenshots/employee-information.png)
-
-### Prediction Result
-
-![Prediction Result](screenshots/prediction-result.png)
-
-GitHub: https://github.com/bhu1ingeniator
+- Employee personal information inputs
+- Job-related information inputs
+- Satisfaction and work-life balance inputs
+- Machine learning-based prediction
+- Simple and user-friendly interface
+- Prediction results displayed directly in the dashboard
 
 ## Machine Learning Workflow
 
-The application follows this workflow:
+The project follows a typical machine learning workflow:
 
 ```text
 Employee Dataset
        ↓
+Data Preprocessing
+       ↓
 Feature Selection
        ↓
-Train/Test Split
+Data Scaling / Encoding
        ↓
-Data Preprocessing
-       ├── Numerical Features → StandardScaler
-       └── Categorical Features → OneHotEncoder
+Model Training
        ↓
-SMOTE
+Trained Model
        ↓
-Random Forest Classifier
+Streamlit Application
        ↓
-Employee Input
-       ↓
-Prediction
-       ↓
-Stay / Leave Probability
-
-
+Employee Attrition Prediction
