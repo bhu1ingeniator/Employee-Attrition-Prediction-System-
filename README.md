@@ -4,7 +4,7 @@ A machine learning-powered Streamlit application that predicts whether an employ
 
 ## Live Demo
 
-[🚀 Try the Employee Attrition Prediction App] [Open the Employee Attrition Prediction System] (https://employee-attrition-prediction-system-app.streamlit.app/)
+[🚀 Try the Employee Attrition Prediction App] (https://employee-attrition-prediction-system-app.streamlit.app/)
 
 ## Project Overview
 
